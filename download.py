@@ -67,11 +67,9 @@ def should_print_entry(newhash, url):
     return printme
 
 
+# TODO
 def print_files():
-    for path, dirs, files in os.walk('C:/dev'):
-        print(path)
-        # for f in files:
-        #     print(f)
+    pass
 
 
 def main():
