@@ -1,4 +1,5 @@
 import os
+import os.path
 
 import requests
 import hashlib
@@ -81,12 +82,15 @@ def main():
         urls = inputfile.read().splitlines()
     for url in urls:
         filename = url.split(sep="/")[-1]
-        download_file(url, tempdir + '/' + filename)
-        newhash = hash_file(filename)
+        temp_filename = os.path.join(tempdir, filename)
+
+        download_file(url, temp_filename)
+        newhash = hash_file(temp_filename)
         # search for existing entry
         printfile = should_print_entry(newhash, url)
         if printfile:
-            os.rename(tempdir + '/' + filename, printdir + '/' + filename)
+            print_filename = os.path.join(printdir, filename)
+            os.rename(temp_filename, print_filename)
     print_files()
 
 
