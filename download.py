@@ -2,6 +2,7 @@ import os
 
 import requests
 import hashlib
+import win32api
 
 from tinydb import TinyDB, Query
 
@@ -51,6 +52,7 @@ def should_print_entry(newhash, url):
     result = db.search(entry.url == url)
     if not result:
         # add new one
+        print("new file")
         db.insert({'url': url, 'md5': newhash})
         printme = True
     elif len(result) == 1:
@@ -58,7 +60,7 @@ def should_print_entry(newhash, url):
         if result[0]['md5'] == newhash:
             print("old file")
         else:
-            print("update")
+            print("update file")
             # update entry
             db.update({'md5': newhash}, entry.url == url)
             printme = True
@@ -69,7 +71,10 @@ def should_print_entry(newhash, url):
 
 # TODO
 def print_files():
-    pass
+    for the_file in os.listdir(printdir):
+        printpath = os.path.abspath(os.path.join(printdir, the_file))
+        print(printpath)
+        win32api.ShellExecute(0, "print", printpath, None, ".", 0)
 
 
 def main():
@@ -80,13 +85,15 @@ def main():
     with open('input.txt') as inputfile:
         urls = inputfile.read().splitlines()
     for url in urls:
-        filename = url.split(sep="/")[-1]
-        download_file(url, tempdir + '/' + filename)
-        newhash = hash_file(filename)
+        filename = url.split(sep='/')[-1]
+        tempfile = os.path.join(tempdir, filename)
+
+        download_file(url, tempfile)
+        newhash = hash_file(tempfile)
         # search for existing entry
         printfile = should_print_entry(newhash, url)
         if printfile:
-            os.rename(tempdir + '/' + filename, printdir + '/' + filename)
+            os.rename(tempfile, os.path.join(printdir, filename))
     print_files()
 
 
