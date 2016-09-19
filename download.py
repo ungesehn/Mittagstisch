@@ -11,6 +11,7 @@ db = TinyDB('db.json')
 tempdir = r'temp'
 printdir = r'print'
 
+loggingEnabled = False
 
 def clean_dir(path):
     for the_file in os.listdir(path):
@@ -42,7 +43,8 @@ def hash_file(file):
     with open(file, 'rb') as afile:
         buf = afile.read()
         hasher.update(buf)
-    print(hasher.hexdigest())
+    if loggingEnabled:
+        print(hasher.hexdigest())
     return hasher.hexdigest()
 
 
@@ -58,9 +60,9 @@ def should_print_entry(newhash, url):
     elif len(result) == 1:
         # compare hashes of existing one
         if result[0]['md5'] == newhash:
-            print("old file")
+            print("old file: " + url)
         else:
-            print("update file")
+            print("updated file")
             # update entry
             db.update({'md5': newhash}, entry.url == url)
             printme = True
@@ -73,7 +75,7 @@ def should_print_entry(newhash, url):
 def print_files():
     for the_file in os.listdir(printdir):
         printpath = os.path.abspath(os.path.join(printdir, the_file))
-        print(printpath)
+        print("Printing: " + printpath)
         win32api.ShellExecute(0, "print", printpath, None, ".", 0)
 
 
@@ -100,4 +102,5 @@ def main():
 if __name__ == "__main__":
     main()
 
-print(db.all())
+if loggingEnabled:
+    print(db.all())
