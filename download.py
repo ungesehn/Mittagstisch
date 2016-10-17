@@ -33,6 +33,8 @@ def make_or_clean_dir(path):
 def download_file(fileurl, f):
     r = requests.get(fileurl, stream=True)
 
+    if r.status_code != requests.codes.ok:
+        r.raise_for_status()
     with open(f, 'wb') as fd:
         for chunk in r.iter_content(1024):
             fd.write(chunk)
@@ -90,12 +92,15 @@ def main():
         filename = url.split(sep='/')[-1]
         tempfile = os.path.join(tempdir, filename)
 
-        download_file(url, tempfile)
-        newhash = hash_file(tempfile)
-        # search for existing entry
-        printfile = should_print_entry(newhash, url)
-        if printfile:
-            os.rename(tempfile, os.path.join(printdir, filename))
+        try:
+            download_file(url, tempfile)
+            newhash = hash_file(tempfile)
+            # search for existing entry
+            printfile = should_print_entry(newhash, url)
+            if printfile:
+                os.rename(tempfile, os.path.join(printdir, filename))
+        except requests.RequestException as err:
+            print("Failed to load file: {0}".format(err))
     print_files()
 
 
