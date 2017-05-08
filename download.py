@@ -56,7 +56,7 @@ def should_print_entry(newhash, url):
     result = db.search(entry.url == url)
     if not result:
         # add new one
-        print("new file")
+        print("new file: " + url)
         db.insert({'url': url, 'md5': newhash})
         printme = True
     elif len(result) == 1:
@@ -64,7 +64,7 @@ def should_print_entry(newhash, url):
         if result[0]['md5'] == newhash:
             print("old file: " + url)
         else:
-            print("updated file")
+            print("updated file: " + url)
             # update entry
             db.update({'md5': newhash}, entry.url == url)
             printme = True
