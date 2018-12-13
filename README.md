@@ -1,6 +1,6 @@
 # Mittagstisch
 
-use Python 3.X (tested with 3.5.2)
+use Python 3.X (tested with 3.7.1)
 
 ## Required Libraries
 
@@ -9,4 +9,4 @@ Install modules using PIP:
 - tinydb (TinyDB and Query)
 
 Includes binaries, download the installer for your platform:
-- [pywin32](https://sourceforge.net/projects/pywin32/)
+- [pywin32](https://github.com/mhammond/pywin32)
